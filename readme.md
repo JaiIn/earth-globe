@@ -171,7 +171,3 @@ interactive-earth/
 | **반응형 디자인** | 모든 디바이스 최적화 | Tailwind CSS |
 
 ---
-
-**🌍 세계를 새로운 시각으로 탐험하세요 - Interactive Earth와 함께**
-
-*Built with ❤️ using Next.js, Three.js, and Nest.js*
