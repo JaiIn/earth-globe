@@ -2,6 +2,7 @@
 import { Canvas } from '@react-three/fiber'
 import React from 'react'
 import Earth from './Earth'
+import { OrbitControls } from '@react-three/drei'
 
 export default function Scene() {
   return (
@@ -17,6 +18,16 @@ export default function Scene() {
         <directionalLight
             position={[10,10,5]}
             intensity={1} />
+
+        <OrbitControls 
+            enablePan={false}     
+            enableZoom={true}     
+            enableRotate={true}  
+            minDistance={1.5}     
+            maxDistance={5}      
+            enableDamping={false}  
+            dampingFactor={0.05}  
+        />
         <Earth/>
     </Canvas>    
   )
