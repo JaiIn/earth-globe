@@ -7,11 +7,11 @@ export default function Controls() {
         enablePan={false}
         enableZoom={true}
         enableRotate={true}
-        minDistance={1.5}
+        minDistance={1.2}
         maxDistance={5}
         enableDamping={false}
         dampingFactor={0.05}
-        rotateSpeed={0.5}
+        rotateSpeed={0.3}
         />
     )
 }

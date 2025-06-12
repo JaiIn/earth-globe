@@ -9,11 +9,11 @@ export default function Clouds() {
     
     const cloudTexture = useLoader(TextureLoader, '/textures/earth_clouds.jpg')
     
-    // useFrame((state, delta) => {
-    //     if (cloudsRef.current) {
-    //     cloudsRef.current.rotation.y += delta * 0.08 
-    //     }
-    // })
+    useFrame((state, delta) => {
+        if (cloudsRef.current) {
+        cloudsRef.current.rotation.y += delta * 0.09 
+        }
+    })
 
     return (
         <mesh ref={cloudsRef}>
@@ -21,7 +21,7 @@ export default function Clouds() {
         <meshStandardMaterial 
             map={cloudTexture}           
             transparent={true}
-            opacity={0.5}               
+            opacity={0.3}               
             alphaTest={0.1}             
             side={THREE.DoubleSide}    
         />

@@ -23,6 +23,12 @@ export default function Earth({ isNight }: EarthProps) {
         });
     });
 
+    useFrame((state, delta) => {
+        if (meshRef.current) {
+        meshRef.current.rotation.y += delta * 0.08 
+        }
+    })
+
     const material = useMemo(() => {
         return new THREE.ShaderMaterial({
             uniforms: {
