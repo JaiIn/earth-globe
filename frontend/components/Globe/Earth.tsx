@@ -4,24 +4,24 @@ import React, { useRef } from "react";
 import { TextureLoader } from 'three'
 import * as THREE from 'three'
 
-export default function Earth() {
+interface EarthProps {
+    isNight: boolean  
+}
+
+export default function Earth({ isNight }: EarthProps) {
     const meshRef = useRef<THREE.Mesh>(null);
     
-    const texture = useLoader(TextureLoader, '/textures/earth_day.jpg')
-
-    // useFrame((state, delta) => {
-    //     if (meshRef.current){
-    //         meshRef.current.rotation.y += delta * 0.2
-    //     }
-    // })
+    const dayTexture = useLoader(TextureLoader, '/textures/earth_day.jpg')
+    const nightTexture = useLoader(TextureLoader, '/textures/earth_night.jpg')
 
     return (
         <mesh ref={meshRef}>
             <sphereGeometry args={[1, 64, 32]} />
             <meshStandardMaterial 
-                map={texture}
-                emissive="#111111"  
-                emissiveIntensity={0.8}/>
+                map={isNight ? nightTexture : dayTexture}  
+                emissive={isNight ? "#111111" : "#000000"} 
+                emissiveIntensity={isNight ? 2.0 : 0}     
+            />
         </mesh>
     );
 }
