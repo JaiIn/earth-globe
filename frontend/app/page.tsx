@@ -1,4 +1,3 @@
-
 'use client'
 import Globe from '@/components/Globe'
 

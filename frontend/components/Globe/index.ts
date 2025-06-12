@@ -1,4 +1,7 @@
 export { default as Scene } from './Scene'
 export { default as Earth }  from './Earth'
 export { default as Controls } from './Controls'
+export { default as Stars } from './Stars'
+export { default as Atmosphere } from './Atmosphere'
+export { default as Clouds } from './Clouds'
 export { default } from './Scene'

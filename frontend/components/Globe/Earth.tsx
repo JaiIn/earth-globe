@@ -18,7 +18,10 @@ export default function Earth() {
     return (
         <mesh ref={meshRef}>
             <sphereGeometry args={[1, 64, 32]} />
-            <meshStandardMaterial map={texture} />
+            <meshStandardMaterial 
+                map={texture}
+                emissive="#111111"  
+                emissiveIntensity={0.8}/>
         </mesh>
     );
 }
