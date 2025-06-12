@@ -24,7 +24,6 @@ export default function Scene() {
             }}
             className="w-full h-full bg-black"
         >
-            {/* 밤/낮에 따른 조명 조절 */}
             <ambientLight intensity={isNight ? 2.0 : 2.0} />
             {!isNight && (
                 <directionalLight 
