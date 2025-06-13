@@ -7,6 +7,7 @@ import Atmosphere from './Atmosphere'
 import Controls from './Controls'
 import Clouds from './Clouds'
 import DayNightToggle from './DayNightToggle' 
+import { CityMarkers } from './CityMarkers'
 
 export default function Scene() {
     const [isNight, setIsNight] = useState(false) 
@@ -17,7 +18,7 @@ export default function Scene() {
         
         <Canvas
             camera={{
-                position:[0,0,3],
+                position:[-1.0, 1.2, -1.5],
                 fov:75,
                 near: 0.1,
                 far: 1000
@@ -37,6 +38,7 @@ export default function Scene() {
             <Stars />
             <Earth isNight={isNight} />  
             <Clouds />
+            <CityMarkers />
             <Atmosphere />
         </Canvas>
         </div>

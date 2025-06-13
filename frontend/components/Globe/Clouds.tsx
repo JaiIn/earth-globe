@@ -16,7 +16,7 @@ export default function Clouds() {
     })
 
     return (
-        <mesh ref={cloudsRef}>
+        <mesh>
         <sphereGeometry args={[1.01, 64, 32]} />
         <meshStandardMaterial 
             map={cloudTexture}           

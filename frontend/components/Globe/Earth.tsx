@@ -75,7 +75,7 @@ export default function Earth({ isNight }: EarthProps) {
     }, [transitionProgress, material]);
 
     return (
-        <mesh ref={meshRef} material={material}>
+        <mesh material={material}>
             <sphereGeometry args={[1, 64, 32]} />
         </mesh>
     );

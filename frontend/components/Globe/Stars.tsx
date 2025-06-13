@@ -44,18 +44,21 @@ export default function Stars() {
         <points ref={pointsRef}>
         <bufferGeometry>
             <bufferAttribute
+            args={[positions,3]}
             attach="attributes-position"
             count={1000}
             array={positions}
             itemSize={3}
             />
             <bufferAttribute
+            args={[positions,3]}
             attach="attributes-color"
             count={1000}
             array={colors}
             itemSize={3}
             />
             <bufferAttribute
+            args={[positions,3]}
             attach="attributes-size"
             count={1000}
             array={sizes}
