@@ -1,7 +1,8 @@
-import { Module } from '@nestjs/common';
+import { Module, OnModuleInit } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import { CityModule } from './cities/cityModule';
+import { DatabaseSeederService } from './cities/Service/databaseSeederService';
 
 @Module({
   imports: [
@@ -22,4 +23,12 @@ import { CityModule } from './cities/cityModule';
     CityModule,
   ],
 })
-export class AppModule {}
+export class AppModule implements OnModuleInit {
+  constructor(private readonly seeder: DatabaseSeederService) {}
+  
+  async onModuleInit() {
+    if (process.env.NODE_ENV === 'development') {
+      await this.seeder.checkAndSeed();
+    }
+  }
+}
