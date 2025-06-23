@@ -1,7 +1,9 @@
 import { Module, OnModuleInit } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
+import { ScheduleModule } from '@nestjs/schedule';
 import { CityModule } from './cities/cityModule';
+import { FlightModule } from './flights/flightModule';
 import { DatabaseSeederService } from './cities/Service/databaseSeederService';
 
 @Module({
@@ -9,6 +11,7 @@ import { DatabaseSeederService } from './cities/Service/databaseSeederService';
     ConfigModule.forRoot({
       isGlobal: true,
     }),
+    ScheduleModule.forRoot(),
     TypeOrmModule.forRoot({
       type: 'mysql',
       host: process.env.DB_HOST || 'localhost',
@@ -21,6 +24,7 @@ import { DatabaseSeederService } from './cities/Service/databaseSeederService';
       logging: process.env.NODE_ENV === 'development',
     }),
     CityModule,
+    FlightModule,
   ],
 })
 export class AppModule implements OnModuleInit {
