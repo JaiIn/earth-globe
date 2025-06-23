@@ -5,11 +5,9 @@ import { useFrame } from '@react-three/fiber'
 import { City, cityApi } from '@/lib/api/cities'
 
 const ChangePositionVector3 = (lat: number, lng: number, radius = 1.02) => {
-    // 위도와 경도를 라디안으로 변환
     const latRad = lat * (Math.PI / 180)
     const lngRad = lng * (Math.PI / 180)
     
-    // 구면 좌표를 직교 좌표로 변환 (아시아 중심 맞춤)
     const x = radius * Math.cos(latRad) * Math.cos(lngRad)
     const y = radius * Math.sin(latRad)
     const z = -radius * Math.cos(latRad) * Math.sin(lngRad)
@@ -17,22 +15,34 @@ const ChangePositionVector3 = (lat: number, lng: number, radius = 1.02) => {
     return new THREE.Vector3(x, y, z)
 }
 
-const CityMarker = ({city}: {city:City}) => {
+const CityMarker = ({city, onCityClick, selectedCityId}: {city:City, onCityClick: (city: City) => void, selectedCityId: number | null}) => {
     const [hovered, setHovered] = useState(false)
-    const [clicked, setClicked] = useState(false)
-    const markerRef = useRef<THREE.Mesh>(null)
+    const markerRef = useRef<THREE.Group>(null)
+    const pinHeadRef = useRef<THREE.Mesh>(null)
+    const pinTailRef = useRef<THREE.Mesh>(null)
 
     const position = ChangePositionVector3(city.latitude, city.longitude)
+    
+    const direction = position.clone().normalize()
+    const isSelected = selectedCityId === city.id
 
     useFrame((state) => {
         if (markerRef.current) {
-        if (clicked) {
-            markerRef.current.scale.setScalar(1.5 + Math.sin(state.clock.elapsedTime * 4) * 0.1)
-        } else if (hovered) {
-            markerRef.current.scale.setScalar(1.3)
-        } else {
-            markerRef.current.scale.setScalar(1)
+            if (isSelected) {
+                const scale = 1.5 + Math.sin(state.clock.elapsedTime * 4) * 0.1
+                markerRef.current.scale.setScalar(scale)
+            } else if (hovered) {
+                markerRef.current.scale.setScalar(1.3)
+            } else {
+                markerRef.current.scale.setScalar(1)
+            }
         }
+        
+        if (pinHeadRef.current && (hovered || isSelected)) {
+            const pulse = 1 + Math.sin(state.clock.elapsedTime * 6) * 0.1
+            pinHeadRef.current.scale.setScalar(pulse)
+        } else if (pinHeadRef.current) {
+            pinHeadRef.current.scale.setScalar(1)
         }
     })
 
@@ -43,46 +53,78 @@ const CityMarker = ({city}: {city:City}) => {
         if (city.tags.includes('financial-hub')) return '#0066FF' // 파랑 - 금융허브
         return '#FF8800' // 주황 - 기본
     }
-    const getMarkerSize = () => {
-        if (!city.population) return 0.006
-        if (city.population > 15000000) return 0.012  // 초대형
-        if (city.population > 10000000) return 0.010  // 대형  
-        if (city.population > 5000000) return 0.008   // 중형
-        return 0.006 // 소형
+    const getPinSize = () => {
+        if (!city.population) return { head: 0.008, tail: 0.015 }
+        if (city.population > 15000000) return { head: 0.015, tail: 0.025 }  // 초대형
+        if (city.population > 10000000) return { head: 0.012, tail: 0.020 }  // 대형  
+        if (city.population > 5000000) return { head: 0.010, tail: 0.018 }   // 중형
+        return { head: 0.008, tail: 0.015 } // 소형
     }
 
     const handleClick = (event: any) => {
         event.stopPropagation()
-        setClicked(!clicked)
-        
-        const populationText = city.population 
-        ? ` | Population: ${(city.population / 1000000).toFixed(1)}M`
-        : ''
-        
-        const tagsText = city.tags.length > 0 ? ` | Tags: ${city.tags.join(', ')}` : ''
-        
-        alert(`${city.name}, ${city.country}${populationText}${tagsText}`)
+        onCityClick(city)
     }
+    const color = getMarkerColor()
+    const size = getPinSize()
     
+    const up = new THREE.Vector3(0, 1, 0)
+    const quaternion = new THREE.Quaternion().setFromUnitVectors(up, direction)
+
     return (
-        <mesh
+        <group
             ref={markerRef}
             position={[position.x, position.y, position.z]}
+            quaternion={quaternion}
             onClick={handleClick}
             onPointerOver={() => setHovered(true)}
             onPointerOut={() => setHovered(false)}
+        >
+            <mesh 
+                ref={pinTailRef}
+                position={[0, -size.tail/2, 0]}
             >
-            <sphereGeometry args={[getMarkerSize(), 8, 8]} />
-            <meshBasicMaterial 
-                color={getMarkerColor()}
-                transparent={true}
-                opacity={0.8}
-            />
-        </mesh>
+                <coneGeometry args={[size.tail/3, size.tail, 8]} />
+                <meshBasicMaterial 
+                    color={color}
+                    transparent={true}
+                    opacity={0.8}
+                />
+            </mesh>
+            
+            <mesh 
+                ref={pinHeadRef}
+                position={[0, size.head, 0]}
+            >
+                <sphereGeometry args={[size.head, 12, 8]} />
+                <meshBasicMaterial 
+                    color={color}
+                    transparent={true}
+                    opacity={0.9}
+                />
+            </mesh>
+            
+            {/* 호버/클릭 시 글로우 효과 */}
+            {(hovered || isSelected) && (
+                <mesh position={[0, size.head, 0]}>
+                    <sphereGeometry args={[size.head * 1.8, 12, 8]} />
+                    <meshBasicMaterial 
+                        color={color}
+                        transparent={true}
+                        opacity={0.2}
+                    />
+                </mesh>
+            )}
+        </group>
     )
 }
 
-export const CityMarkers = () => {
+interface CityMarkersProps {
+    onCityClick: (city: City) => void
+    selectedCityId: number | null
+}
+
+export const CityMarkers = ({ onCityClick, selectedCityId }: CityMarkersProps) => {
 
     const [cities, setCities] = useState<City[]>([]);
     const [loading, setLoading] = useState(true);
@@ -114,7 +156,7 @@ export const CityMarkers = () => {
     return (
         <group >
         {cities.map((city) => (
-            <CityMarker key={city.id} city={city} />
+            <CityMarker key={city.id} city={city} onCityClick={onCityClick} selectedCityId={selectedCityId} />
         ))}
         </group>
     )
